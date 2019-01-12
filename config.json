@@ -1,0 +1,6 @@
+{
+    "deletePermanently": true,
+    "fileMimeType": "image/jpeg",
+    "fileNameOnDrive": "foo.jpg",
+    "localFilePath": "./files/foo.jpg"
+}
