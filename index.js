@@ -14,23 +14,26 @@ async function main() {
     })
     if (!OAuth2) { return }
     const json = await utils.readJsonFile(backupInfoPath)
-    if (!json) {
+    if (!json || !config.trackFile.isEnabled) {
         //nessun json salvato, primo backup
-        console.log("Nessun backup recente...")
-        manager.uploadFile(OAuth2, config.fileNameOnDrive, config.fileMimeType, config.localFilePath, id => {
+        console.log("No recent backups...")
+        manager.uploadFile(OAuth2, config.localFilePath, id => {
             if (!id) { return }
-            utils.saveJsonFile(backupInfoPath, { backupId: id }).catch(err => {
-                console.log("Error saving backupInfos:", err)
-            })
+            saveBackupInfo(id)
         })
         return
     }
     //presente un json, non è il primo backup
-    manager.deleteFile(OAuth2, json.backupId, true)
-    manager.uploadFile(OAuth2, config.fileNameOnDrive, config.fileMimeType, config.localFilePath, id => {
+    manager.deleteFile(OAuth2, json.backupId, config.trackFile.deletePermanently)
+    manager.uploadFile(OAuth2, config.localFilePath, id => {
         if (!id) { return }
-        utils.saveJsonFile(backupInfoPath, { backupId: id }).catch(err => {
-            console.log("Error saving backupInfos:", err)
-        })
+        saveBackupInfo(id)
+    })
+}
+
+function saveBackupInfo(backupId) {
+    utils.createDir('./resources')
+    utils.saveJsonFile(backupInfoPath, { backupId: backupId }).catch(err => {
+        console.log("Error saving backupInfos:", err)
     })
 }

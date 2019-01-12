@@ -1,5 +1,6 @@
 const fs = require('fs')
 const { google } = require('googleapis')
+const path = require('path')
 
 module.exports = exports
 
@@ -27,21 +28,18 @@ function deleteFile(auth, fileId, deletePermanently) {
 
 /**
  * 
- * @param {OAuth2} auth 
- * @param {String} fileName 
- * @param {String} mimeType 
+ * @param {OAuth2} auth
  * @param {String} filePath
  * @param {function} callback
  * @return {String} return the file id on Google Drive
  */
-function uploadFile(auth, fileName, mimeType, localFilePath, callback) {
-    console.log("Upload file in corso...")
+function uploadFile(auth, localFilePath, callback) {
+    console.log("Uploading file...")
     const drive = google.drive({ version: 'v3', auth })
     const fileMetadata = {
-        'name': fileName
+        'name': path.basename(localFilePath)
     }
     const media = {
-        mimeType: mimeType,
         body: fs.createReadStream(localFilePath)
     }
     drive.files.create({
@@ -53,7 +51,7 @@ function uploadFile(auth, fileName, mimeType, localFilePath, callback) {
             console.error(err)
             return callback()
         }
-        console.log("Upload completato!")
+        console.log("Upload completed!")
         console.log('File Id: ', file.data.id)
         return callback(file.data.id)
     })

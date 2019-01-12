@@ -19,7 +19,20 @@ async function readJsonFile(path) {
     return await promisify(fs.readFile)(path).then(data => JSON.parse(data)).catch(err => console.log(err))
 }
 
+
+function createDir(path) {
+    if (!fs.existsSync(path)){
+        fs.mkdirSync(path)
+    }
+}
+
+function isDirectory(path) {
+    return fs.lstatSync(path).isDirectory()
+}
+
 module.exports = exports
 
 exports.saveJsonFile = saveJsonFile
 exports.readJsonFile = readJsonFile
+exports.createDir = createDir
+exports.isDirectory = isDirectory
