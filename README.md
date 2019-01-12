@@ -1,6 +1,8 @@
 # Google Drive - Auto Uploader
 
-You can use this Project to automatically upload files to your Google Drive Account.
+You can use this Script to automatically upload a file to your Google Drive Account. 
+For now, this script it's only meant for backing up a VPS and deleting the old one on Google Drive.
+It's more like a private project.
 
 ## Setup
 
@@ -22,7 +24,7 @@ Then, setup the config.json.
 }
 ```
 1) deletePermanently: If true, for every execution the trash can of Google Drive will be emptied.
-2) fileMimeType: The file Mime-Type you will upload. If you want to upload a _.tar.gz_ you need to set it to "application/gzip".
+2) fileMimeType: The file [Mime-Type](https://www.freeformatter.com/mime-types-list.html) you will upload. If you want to upload a _.tar.gz_ you need to set it to "application/gzip".
 3) fileNameOnDrive: The file will be saved with this name Google Drive.
 4) localFilePath: The path of the file that will be uploaded.
 
