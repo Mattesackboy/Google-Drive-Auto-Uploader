@@ -21,13 +21,16 @@ Then, setup the config.json.
         "isEnabled": true,
         "deletePermanently": true
     },
-    "localFilePath": "./files/foo.jpg"
+    "filesInfo": {
+        "localPath": "./files"
+    }
 }
 ```
 1) trackFile:
 * isEnabled: If `true`, the script will save the the uploaded file's ID, and in the next execution will delete it from Google Drive.
 * deletePermanently: If trackFile `isEnabled` is setted to `true` and this option is enabled too, for every execution the trash can of Google Drive will be emptied.
-2) localFilePath: The path of the file that will be uploaded.
+2) filesInfo: 
+* localPath: The path of the file/s that will be uploaded. Can be a path to a Folder or to a File.
 
 Do not delete _resources folder_, or delete files in it.
 
