@@ -3,5 +3,7 @@
         "isEnabled": true,
         "deletePermanently": true
     },
-    "localFilePath": "./files/foo.jpg"
+    "filesInfo": {
+        "localPath": "./files"
+    }
 }

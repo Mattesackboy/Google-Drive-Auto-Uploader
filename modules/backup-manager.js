@@ -1,6 +1,8 @@
 const fs = require('fs')
 const { google } = require('googleapis')
 const path = require('path')
+const utilities = require('./utilities')
+const { promisify } = require('util')
 
 module.exports = exports
 
@@ -8,20 +10,29 @@ module.exports = exports
 exports.deleteFile = deleteFile
 exports.uploadFile = uploadFile
 
-
 /**
  * 
  * @param {String} auth  OAuth2
- * @param {String} fileId String, you get it when uploading a file
  * @param {boolean}
+ * @param {Array<String>} fileIds String, you get it when uploading a file
  */
-function deleteFile(auth, fileId, deletePermanently) {
+async function deleteFile(auth, deletePermanently, fileIds) {
     const drive = google.drive({ version: 'v3', auth })
-    drive.files.delete({
-        'fileId': fileId
+    const driveDelete = promisify(drive.files.delete)
+    console.log("Deleting files...")
+    const promises = fileIds.map(id => {
+        return driveDelete({
+            'fileId': id
+        })
     })
-    if (deletePermanently) {
-        drive.files.emptyTrash()
+    try {
+        await Promise.all(promises)
+        console.log("Files deleted!")
+        if (deletePermanently) {
+            drive.files.emptyTrash()
+        }
+    } catch (err) {
+        console.error("An error occurred on deleteFile", err)
     }
 }
 
@@ -29,32 +40,45 @@ function deleteFile(auth, fileId, deletePermanently) {
 /**
  * 
  * @param {OAuth2} auth
- * @param {String} filePath
- * @param {function} callback
- * @return {String} return the file id on Google Drive
+ * @param {String} localPath
+ * @return {Array<String>} return the file id on Google Drive
  */
-function uploadFile(auth, localFilePath, callback) {
-    console.log("Uploading file...")
+async function uploadFile(auth, localPath) {
+    console.log("Uploading file/s...")
     const drive = google.drive({ version: 'v3', auth })
-    const fileMetadata = {
-        'name': path.basename(localFilePath)
+    if (utilities.isDirectory(localPath)) {
+        localPath = await utilities.listFiles(localPath)
+    } else {
+        localPath = [localPath]
     }
-    const media = {
-        body: fs.createReadStream(localFilePath)
-    }
-    drive.files.create({
-        resource: fileMetadata,
-        media: media,
-        fields: 'id'
-    }, (err, file) => {
-        if (err) {
-            console.error(err)
-            return callback()
+
+    const createFile = promisify(drive.files.create)
+    let promises = []
+    localPath.forEach(element => {
+        const fileMetadata = {
+            'name': path.basename(element)
         }
-        console.log("Upload completed!")
-        console.log('File Id: ', file.data.id)
-        return callback(file.data.id)
+        const media = {
+            body: fs.createReadStream(element)
+        }
+        promises.push(createFile({
+            resource: fileMetadata,
+            media: media,
+            fields: 'id'
+        }))
     })
+
+    try {
+        return await Promise.all(promises).then(arrOfFiles => {
+            console.log("Upload completed!")
+            const ids = arrOfFiles.map(file => file.data.id)
+            console.log('File Ids: ', ids)
+            return ids
+        })
+    } catch (err) {
+        console.log(`An error occured uploading files. Specific error: ${err}`)
+        return null
+    }
 }
 
 /**

@@ -86,4 +86,5 @@ credentials.json
 token.json
 
 #Generated Files
-lastBackupInfo.json
+./resources
+uploadedInfo.json

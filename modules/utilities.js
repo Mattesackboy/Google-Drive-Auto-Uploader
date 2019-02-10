@@ -30,9 +30,22 @@ function isDirectory(path) {
     return fs.lstatSync(path).isDirectory()
 }
 
+async function listFiles(path) {
+    if (isDirectory(path)) {
+        const readDir = promisify(fs.readdir)
+        return await readDir(path).then(items => {
+            return items.map(file => {
+                return `${path}/${file}`
+            })
+        })
+    }
+    return []
+}
+
 module.exports = exports
 
 exports.saveJsonFile = saveJsonFile
 exports.readJsonFile = readJsonFile
 exports.createDir = createDir
 exports.isDirectory = isDirectory
+exports.listFiles = listFiles
