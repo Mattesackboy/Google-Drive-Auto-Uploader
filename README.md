@@ -23,6 +23,9 @@ Then, setup the config.json.
     },
     "filesInfo": {
         "localPath": "./files"
+    },
+    "otherSettings": {
+        "aioUpload": true
     }
 }
 ```
@@ -31,6 +34,8 @@ Then, setup the config.json.
 * deletePermanently: If trackFile `isEnabled` is setted to `true` and this option is enabled too, for every execution the trash can of Google Drive will be emptied.
 2) filesInfo: 
 * localPath: The path of the file/s that will be uploaded. Can be a path to a Folder or to a File.
+3) otherSettings: 
+* aioUpload: If `true`, the script will upload all the files at the same time on Google Drive, otherwise one at the time.
 
 Do not delete _resources folder_, or delete files in it.
 
