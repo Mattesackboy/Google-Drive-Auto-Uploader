@@ -55,7 +55,7 @@ async function uploadFile(auth, localPath, aioUpload = true) {
 
     const createFile = promisify(drive.files.create)
     let promises = []
-    for (const element of localPath) 
+    for (const element of localPath) {
         const fileMetadata = {
             'name': path.basename(element)
         }
