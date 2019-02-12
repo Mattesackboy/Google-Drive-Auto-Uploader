@@ -5,5 +5,8 @@
     },
     "filesInfo": {
         "localPath": "./files"
+    },
+    "otherSettings": {
+        "aioUpload": false
     }
 }

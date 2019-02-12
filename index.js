@@ -18,7 +18,7 @@ async function main() {
     if (!json || !config.trackFile.isEnabled) {
         //nessun json salvato, primo upload
         console.log("No recent uploads...")
-        await manager.uploadFile(OAuth2, config.filesInfo.localPath).then(ids => {
+        await manager.uploadFile(OAuth2, config.filesInfo.localPath, config.otherSettings.aioUpload).then(ids => {
             if (!ids) { return }
             saveUploadedInfo(ids)
         })
@@ -27,7 +27,7 @@ async function main() {
     //presente un json, non è il primo upload
     console.log("Not first upload...")
     await manager.deleteFile(OAuth2, config.trackFile.deletePermanently, json)
-    await manager.uploadFile(OAuth2, config.filesInfo.localPath).then(ids => {
+    await manager.uploadFile(OAuth2, config.filesInfo.localPath, config.otherSettings.aioUpload).then(ids => {
         if (!ids) { return }
         saveUploadedInfo(ids)
     })

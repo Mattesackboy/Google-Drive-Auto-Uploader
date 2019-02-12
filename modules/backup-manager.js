@@ -41,9 +41,10 @@ async function deleteFile(auth, deletePermanently, fileIds) {
  * 
  * @param {OAuth2} auth
  * @param {String} localPath
+ * @param {Boolean} aioUpload
  * @return {Array<String>} return the file id on Google Drive
  */
-async function uploadFile(auth, localPath) {
+async function uploadFile(auth, localPath, aioUpload = true) {
     console.log("Uploading file/s...")
     const drive = google.drive({ version: 'v3', auth })
     if (utilities.isDirectory(localPath)) {
@@ -54,19 +55,26 @@ async function uploadFile(auth, localPath) {
 
     const createFile = promisify(drive.files.create)
     let promises = []
-    localPath.forEach(element => {
+    for (const element of localPath) 
         const fileMetadata = {
             'name': path.basename(element)
         }
         const media = {
             body: fs.createReadStream(element)
         }
-        promises.push(createFile({
+        const promise = createFile({
             resource: fileMetadata,
             media: media,
             fields: 'id'
-        }))
-    })
+        })
+        if (typeof aioUpload === 'boolean' && !aioUpload) {
+            const file = await promise
+            console.log(`File ${path.basename(element)} uploaded! File Id: ${file.data.id}`)
+            promises.push(file)
+        } else {
+            promises.push(promise)
+        }
+    }
 
     try {
         return await Promise.all(promises).then(arrOfFiles => {
