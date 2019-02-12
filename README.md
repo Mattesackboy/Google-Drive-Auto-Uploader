@@ -25,7 +25,7 @@ Then, setup the config.json.
         "localPath": "./files"
     },
     "otherSettings": {
-        "aioUpload": true
+        "aioUpload": false
     }
 }
 ```
